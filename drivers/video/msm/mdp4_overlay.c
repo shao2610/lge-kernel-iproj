@@ -434,7 +434,8 @@ void mdp4_overlay_dmae_cfg(struct msm_fb_data_type *mfd, int atv)
 		MDP_OUTP(MDP_BASE + 0xb3014, 0x1000080);
 		MDP_OUTP(MDP_BASE + 0xb4004, 0x67686970);
 	} else {
-		mdp_vid_quant_set();
+		// NOTE This method is blank if HDMI out disabled
+		//mdp_vid_quant_set();
 		MDP_OUTP(MDP_BASE + 0xb0070, 0xff0000);
 		MDP_OUTP(MDP_BASE + 0xb0074, 0xff0000);
 		MDP_OUTP(MDP_BASE + 0xb0078, 0xff0000);
@@ -3517,8 +3518,9 @@ int mdp4_overlay_play(struct fb_info *info, struct msmfb_overlay_data *req)
 			mdp4_lcdc_pipe_queue(0, pipe);
 		}
 	} else if (pipe->mixer_num == MDP4_MIXER1) {
-		if (ctrl->panel_mode & MDP4_PANEL_DTV)
-			mdp4_dtv_pipe_queue(0, pipe);/* cndx = 0 */
+		// NOTE No DTV temp disable
+		//if (ctrl->panel_mode & MDP4_PANEL_DTV)
+		//	mdp4_dtv_pipe_queue(0, pipe);/* cndx = 0 */
 	}
 
 	mutex_unlock(&mfd->dma->ov_mutex);
@@ -3593,8 +3595,9 @@ int mdp4_overlay_commit(struct fb_info *info)
 			mdp4_lcdc_pipe_commit(0, 1);
 		}
 	} else if (mixer == MDP4_MIXER1) {
-		if (ctrl->panel_mode & MDP4_PANEL_DTV)
-			mdp4_dtv_pipe_commit(0, 1);
+		// NOTE disable with DTV
+		//if (ctrl->panel_mode & MDP4_PANEL_DTV)
+		//	mdp4_dtv_pipe_commit(0, 1);
 	}
 	msm_fb_signal_timeline(mfd);
 

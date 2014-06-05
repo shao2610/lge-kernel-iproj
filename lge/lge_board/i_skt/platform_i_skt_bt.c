@@ -135,11 +135,9 @@ static int configure_pcm_gpios(int on)
 	return ret;
 }
 
-static int bt_status = 0;
 static int i_skt_bluetooth_power(int on)
 {
   int ret, pin;
-
        if (on == bt_status)
                return 0;
 
