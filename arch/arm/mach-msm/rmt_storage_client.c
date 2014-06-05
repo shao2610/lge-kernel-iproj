@@ -778,7 +778,7 @@ static int rmt_storage_event_alloc_rmt_buf_cb(
 	if (event_type != RMT_STORAGE_EVNT_ALLOC_RMT_BUF)
 		return -EINVAL;
 
-	pr_debug("%s: Alloc rmt buf callback received\n", __func__);
+	pr_info("%s: Alloc rmt buf callback received\n", __func__);
 	xdr_recv_uint32(xdr, &handle);
 	xdr_recv_uint32(xdr, &size);
 

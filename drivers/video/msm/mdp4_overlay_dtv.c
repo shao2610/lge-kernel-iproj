@@ -186,12 +186,11 @@ int mdp4_dtv_pipe_commit(int cndx, int wait)
 	mixer = pipe->mixer_num;
 	mdp4_overlay_iommu_unmap_freelist(mixer);
 
-	mdp_update_pm(vctrl->mfd, vctrl->vsync_time);
-
-	if (vp->update_cnt == 0) {
-		mutex_unlock(&vctrl->update_lock);
-		return 0;
-	}
+	/*
+	 * allow stage_commit without pipes queued
+	 * (vp->update_cnt == 0) to unstage pipes after
+	 * overlay_unset
+	 */
 
 	vctrl->update_ndx++;
 	vctrl->update_ndx &= 0x01;
@@ -1104,6 +1103,11 @@ void mdp4_dtv_overlay(struct msm_fb_data_type *mfd)
 		return;
 	}
 
+	if (!mdp4_overlay_borderfill_supported()) {
+		mutex_unlock(&mfd->dma->ov_mutex);
+		return;
+	}
+
 	vctrl = &vsync_ctrl_db[cndx];
 	if (vctrl->base_pipe == NULL)
 		mdp4_overlay_dtv_set(mfd, NULL);
@@ -1115,6 +1119,7 @@ void mdp4_dtv_overlay(struct msm_fb_data_type *mfd)
 		mutex_unlock(&mfd->dma->ov_mutex);
 		return;
 	}
+	mdp_update_pm(mfd, vsync_ctrl_db[0].vsync_time);
 
 	if (hdmi_prim_display && (pipe->pipe_used == 0 ||
 			pipe->mixer_stage != MDP4_MIXER_STAGE_BASE)) {

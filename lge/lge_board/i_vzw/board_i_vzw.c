@@ -118,6 +118,9 @@
 #ifdef CONFIG_LGE_WIRELESS_CHARGER_BQ24160
 #include <linux/bq24160-charger.h>
 #endif
+#ifdef CONFIG_LGE_WIRELESS_CHARGER_RT9524
+#include <linux/rt9524-charger.h>
+#endif
 
 #if 0 /* moved following macros into devices_i_vzw.h */
 /* Macros assume PMIC GPIOs start at 0 */
@@ -1789,8 +1792,8 @@ static struct msm_serial_hs_platform_data msm_uart_dm1_pdata = {
 static struct touch_device_caps touch_caps = {
 	.button_support 			= 1,
 	.y_button_boundary			= 0,
-	.number_of_button 			= 3,
-	.button_name 				= {KEY_MENU,KEY_HOMEPAGE,KEY_BACK},
+	.number_of_button 			= 4,
+	.button_name 				= {KEY_MENU,KEY_HOMEPAGE,KEY_BACK,KEY_SEARCH},
 	.button_margin 				= 10,
 	.is_width_supported 		= 1,
 	.is_pressure_supported 		= 1,
@@ -1798,10 +1801,10 @@ static struct touch_device_caps touch_caps = {
 	.max_width 					= 15,
 	.max_pressure 				= 0xFF,
 	.max_id						= 10,
-	.lcd_x						= 720,
-	.lcd_y						= 1280,
-	.x_max						= 1110,
-	.y_max						= 1973,
+	.lcd_x						= 480,
+	.lcd_y						= 800,
+	.x_max						= 1036,
+	.y_max						= 1728,
 };
 
 static struct touch_operation_role touch_role = {
@@ -2793,6 +2796,12 @@ struct platform_device msm_device_sdio_al = {
 
 #endif /* CONFIG_MSM_SDIO_AL */
 
+#ifdef CONFIG_LGE_WIRELESS_CHARGER_RT9524
+static struct platform_device rt9524_charger_device = {
+       .name = "rt9524",
+       .id = 0,
+};
+#endif
 #ifdef CONFIG_LGE_PMIC8901_REGULATOR
 /* we don't use */
 #else
@@ -3045,7 +3054,11 @@ static struct platform_device *surf_devices[] __initdata = {
 
 #ifdef CONFIG_LGE_HALLIC_CARKIT
 	&hallic_dock_device,
-#endif	
+#endif
+
+#ifdef CONFIG_LGE_WIRELESS_CHARGER_RT9524
+       &rt9524_charger_device,
+#endif
 
 };
 
@@ -6499,8 +6512,8 @@ static void __init msm8x60_init(struct msm_board_data *board_data)
 	platform_add_devices(early_regulators, ARRAY_SIZE(early_regulators));
 
 	//backlight off before mipi shutdown
-	gpio_tlmm_config(GPIO_CFG(49, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),GPIO_CFG_ENABLE);
-	gpio_set_value(49, 0);
+//	gpio_tlmm_config(GPIO_CFG(49, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),GPIO_CFG_ENABLE);
+//	gpio_set_value(49, 0);
 
 	msm_clock_init(&msm8x60_clock_init_data);
 
